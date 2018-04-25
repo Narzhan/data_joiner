@@ -61,7 +61,7 @@ class Joiner:
     def read_b(self) -> dict:
         # id,name,set,price,stock
         print(self.search)
-        if os.path.isfile("rytir2.csv"):
+        if os.path.isfile("rytir.csv"):
             searched_cards = []
             self.max_items = 0
             for lists in self.search.values():
@@ -69,7 +69,7 @@ class Joiner:
                     self.max_items = len(lists)
                 for card in lists:
                     searched_cards.append(card)
-            with open("rytir2.csv", "r", errors="ignore") as file:
+            with open("rytir.csv", "r", errors="ignore") as file:
                 reader = csv.reader(file, delimiter=";")
                 next(reader)
                 data = {}
@@ -83,7 +83,7 @@ class Joiner:
                         print("Error at Rytir read {} at row {}".format(e, row))
             return data
         else:
-            raise KeyboardInterrupt("Missing file rytir.csv")
+            raise KeyboardInterrupt("Missing file")
 
     def write_result(self):
         try:
