@@ -1,23 +1,46 @@
 import csv
 import os
 import sys
+import uuid
+import traceback
 
 
 class Joiner:
     def __init__(self):
         self.search = {}
         self.result = {}
+        self.ids = []
+        self.id_mapping = {}
+
+    def generate_id(self):
+        while True:
+            uid = str(uuid.uuid4())[:6]
+            if uid not in self.ids:
+                self.ids.append(uid)
+                return uid
+
+    def write_ids(self):
+        try:
+            with open("rytir.csv", "r") as input_file:
+                reader = csv.reader(input_file, delimiter=";")
+                next(reader)
+                print("File load done")
+                print("Starting to generate ids")
+                with open("rytir_with_ids.csv", "w") as output_file:
+                    for row in reader:
+                        uid = self.generate_id()
+                        self.id_mapping["{};{}".format(row[0], row[1])] = uid
+                        output_file.write("{};{}\n".format(uid, ";".join(row)))
+                print("Done")
+                self.ids = None
+        except Exception as e:
+            raise KeyboardInterrupt(e)
 
     def read_input(self):
         if os.path.isfile("vstup.csv"):
             try:
                 with open("vstup.csv", "r") as file:
                     reader = csv.reader(file, delimiter=";")
-                    # for row in reader:
-                    #     try:
-                    #         self.search[row[0]] = row[1:]  # prvni index (0) je karta rishady, zbytek rytire
-                    #     except KeyError as ke:
-                    #         print("Error at search pairing {}".format(ke))
 
                     headers = next(reader)
                     columns = {}
@@ -27,13 +50,17 @@ class Joiner:
                         for h, v in zip(headers, row):
                             columns[h].append(v)
                         try:
-                            self.search[columns["id rishada"][0]] = columns["rytir_id"]
+                            # row = list(filter(None, row))
+                            self.search[columns["id rishada"][0]] = [
+                                self.id_mapping["{};{}".format(list(filter(None, columns["nazev rytir"]))[i],list(filter(None, columns["id edice rytir"]))[i])]
+                                for i in range(len(list(filter(None,columns["nazev rytir"]))))]
                             for k in columns:
                                 columns[k] = []
                         except KeyError as ke:
                             print("Error at search pairing {}".format(ke))
 
             except Exception as e:
+                traceback.print_exc()
                 print("Error at input read {}".format(e))
         else:
             raise KeyboardInterrupt("Missing file ridici-soubor.csv")
@@ -60,8 +87,7 @@ class Joiner:
 
     def read_b(self) -> dict:
         # id,name,set,price,stock
-        print(self.search)
-        if os.path.isfile("rytir.csv"):
+        if os.path.isfile("rytir_with_ids.csv"):
             searched_cards = []
             self.max_items = 0
             for lists in self.search.values():
@@ -69,7 +95,7 @@ class Joiner:
                     self.max_items = len(lists)
                 for card in lists:
                     searched_cards.append(card)
-            with open("rytir.csv", "r", errors="ignore") as file:
+            with open("rytir_with_ids.csv", "r", errors="ignore") as file:
                 reader = csv.reader(file, delimiter=";")
                 next(reader)
                 data = {}
@@ -83,7 +109,7 @@ class Joiner:
                         print("Error at Rytir read {} at row {}".format(e, row))
             return data
         else:
-            raise KeyboardInterrupt("Missing file")
+            raise KeyboardInterrupt("Missing file rytir_with_ids.csv")
 
     def write_result(self):
         try:
@@ -126,6 +152,7 @@ class Joiner:
 
     def main(self):
         try:
+            self.write_ids()
             try:
                 self.read_input()
             except Exception as e:
