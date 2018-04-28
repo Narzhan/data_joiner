@@ -37,6 +37,9 @@ class Joiner:
         except Exception as e:
             raise KeyboardInterrupt(e)
 
+#self.id_mapping["{};{}".format(list(filter(None, columns["nazev rytir"]))[i],list(filter(None, columns["id edice rytir"]))[i])]
+#                           for i in range(len(list(filter(None,columns["nazev rytir"]))))
+
     def read_input(self):
         if os.path.isfile("vstup.csv"):
             try:
@@ -48,13 +51,14 @@ class Joiner:
                     for h in headers:
                         columns[h] = []
                     for row in reader:
+                        row = list(filter(None, row))
                         for h, v in zip(headers, row):
                             columns[h].append(v)
                         try:
                             # row = list(filter(None, row))
                             self.search[columns["id rishada"][0]] = [
-                                self.id_mapping["{};{}".format(list(filter(None, columns["nazev rytir"]))[i],list(filter(None, columns["id edice rytir"]))[i])]
-                                for i in range(len(list(filter(None,columns["nazev rytir"]))))]
+                                self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
+                                for i in range(len(columns["nazev rytir"]))]
                             for k in columns:
                                 columns[k] = []
                         except KeyError as ke:
