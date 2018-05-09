@@ -4,6 +4,7 @@ import sys
 import uuid
 import traceback
 import re
+import json
 
 
 class Joiner:
@@ -32,10 +33,16 @@ class Joiner:
                         uid = self.generate_id()
                         self.id_mapping["{};{}".format(row[0], row[1])] = uid
                         output_file.write("{};{}\n".format(uid, ";".join(row)))
-                print("Done")
+                print("Done creating id card mapping and id generation")
                 self.ids = None
+                with open("cache.json", "w") as cache:
+                    json.dump(self.id_mapping, cache)
         except Exception as e:
             raise KeyboardInterrupt(e)
+
+    def load_cache(self):
+        with open("cache.json", "r") as cache:
+            self.id_mapping = json.load(cache)
 
 #self.id_mapping["{};{}".format(list(filter(None, columns["nazev rytir"]))[i],list(filter(None, columns["id edice rytir"]))[i])]
 #                           for i in range(len(list(filter(None,columns["nazev rytir"]))))
@@ -162,7 +169,12 @@ class Joiner:
 
     def main(self):
         try:
-            self.write_ids()
+            if os.path.isfile("cache.json"):
+                print("Found cache, loading values from it.")
+                self.load_cache()
+            else:
+                print("Cache not found, Id generation will start.")
+                self.write_ids()
             try:
                 self.read_input()
             except Exception as e:
