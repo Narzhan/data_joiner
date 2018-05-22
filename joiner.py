@@ -52,7 +52,6 @@ class Joiner:
             try:
                 with open("vstup.csv", "r", errors="ignore") as file:
                     reader = csv.reader(file, delimiter=";")
-
                     headers = next(reader)
                     columns = {}
                     for h in headers:
@@ -71,13 +70,11 @@ class Joiner:
                             print("Error at search pairing {}".format(ke))
                         for k in columns:
                             columns[k] = []
-
             except Exception as e:
-                traceback.print_exc()
-                print("Error at input read {} {}".format(e, row))
+                # traceback.print_exc()
+                print("Error at input read {} at row {}".format(e, row))
         else:
             raise KeyboardInterrupt("Missing file ridici-soubor.csv")
-#, errors="ignore"
 
     def read_r(self) -> dict:
         if os.path.isfile("rishada.csv"):
@@ -88,8 +85,8 @@ class Joiner:
                 for row in reader:
                     try:
                         if row[0] in self.search.keys():  # na prvnim indexu je id karty
-                            if ",," in row[-1] or "," in row[-1]:
-                                row[-1] = re.split(",,|,", row[-1])[0]
+                            # if ",," in row[-1] or "," in row[-1]:
+                            #     row[-1] = re.split(",,|,", row[-1])[0]
                             data[row[0]] = [row[0], row[1], row[3], row[2], row[6], row[9], row[8], row[10]]
                             # posloupnost indexu odpovida tomuto poradi polozek
                             # id nazev EdID Edice Rarita prodejka nakupka sklad
@@ -115,8 +112,8 @@ class Joiner:
                 for row in reader:
                     try:
                         if row[0] in searched_cards:
-                            if ",," in row[-1] or "," in row[-1]:
-                                row[-1] = re.split(",,|,", row[-1])[0]
+                            # if ",," in row[-1] or "," in row[-1]:
+                            #     row[-1] = re.split(",,|,", row[-1])[0]
                             data[row[0]] = [row[3], row[4],
                                             row[2]]  # prvni index je id karty, treti je cena ctvrty je sklad a druha je edice
                     except Exception as e:
