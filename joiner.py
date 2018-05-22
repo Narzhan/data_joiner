@@ -67,6 +67,7 @@ class Joiner:
                                 self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
                                 for i in range(len(columns["nazev rytir"]))]
                         except KeyError as ke:
+                            self.search[columns["id rishada"][0]] = []
                             print("Error at search pairing {}".format(ke))
                         for k in columns:
                             columns[k] = []
@@ -108,9 +109,8 @@ class Joiner:
                     self.max_items = len(lists)
                 for card in lists:
                     searched_cards.append(card)
-            with open("rytir_with_ids.csv", "r", errors="ignore") as file:
+            with open("rytir_with_ids.csv", "r") as file:
                 reader = csv.reader(file, delimiter=";")
-                next(reader)
                 data = {}
                 for row in reader:
                     try:
@@ -156,9 +156,13 @@ class Joiner:
                             prices.append(int(rytir_data[item][0]))  # prvni index je cena
                             stock.append(int(rytir_data[item][1]))  # druhy index je sklad
                             data.append(";".join(rytir_data[item]))
-                        file.write(
-                            "{};{};{};{};{}\n".format(";".join(rishada_data[key]), max(prices), min(prices), sum(stock),
-                                                      ";".join(data)))
+                        if len(data) == 0:
+                            file.write("{}\n".format(";".join(rishada_data[key])))
+                        else:
+                            file.write(
+                                "{};{};{};{};{}\n".format(";".join(rishada_data[key]), max(prices), min(prices),
+                                                          sum(stock),
+                                                          ";".join(data)))
                     except Exception as e:
                         file.write("{}\n".format(";".join(rishada_data[key])))
                         print("Error at data paring, reason: {} at id {}".format(e, key))
