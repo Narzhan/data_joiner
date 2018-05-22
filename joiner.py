@@ -50,7 +50,7 @@ class Joiner:
     def read_input(self):
         if os.path.isfile("vstup.csv"):
             try:
-                with open("vstup.csv", "r") as file:
+                with open("vstup.csv", "r", errors="ignore") as file:
                     reader = csv.reader(file, delimiter=";")
 
                     headers = next(reader)
@@ -66,14 +66,14 @@ class Joiner:
                             self.search[columns["id rishada"][0]] = [
                                 self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
                                 for i in range(len(columns["nazev rytir"]))]
-                            for k in columns:
-                                columns[k] = []
                         except KeyError as ke:
                             print("Error at search pairing {}".format(ke))
+                        for k in columns:
+                            columns[k] = []
 
             except Exception as e:
                 traceback.print_exc()
-                print("Error at input read {}".format(e))
+                print("Error at input read {} {}".format(e, row))
         else:
             raise KeyboardInterrupt("Missing file ridici-soubor.csv")
 #, errors="ignore"
@@ -161,7 +161,7 @@ class Joiner:
                                                       ";".join(data)))
                     except Exception as e:
                         file.write("{}\n".format(";".join(rishada_data[key])))
-                        print("Error at data paring, reason: {} at id {}".format(e, item))
+                        print("Error at data paring, reason: {} at id {}".format(e, key))
             print("Wrote {} lines to result.csv".format(len(rishada_data)))
         except Exception as e:
             #traceback.print_exc()
