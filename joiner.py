@@ -61,20 +61,33 @@ class Joiner:
                         for h, v in zip(headers, row):
                             columns[h].append(v)
                         try:
-                            # row = list(filter(None, row))
-                            self.search[columns["id rishada"][0]] = [
-                                self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
-                                for i in range(len(columns["nazev rytir"]))]
-                        except KeyError as ke:
                             self.search[columns["id rishada"][0]] = []
-                            print("Error at search pairing {}".format(ke))
-                        for k in columns:
-                            columns[k] = []
+                        except Exception as e:
+                            print(
+                                "Failed to add rishada card {}, this exception is critical and needs to be fixed to proceed".format(
+                                    e))
+                        else:
+                            for i in range(len(columns["nazev rytir"])):
+                                try:
+                                    self.search[columns["id rishada"][0]].append(self.id_mapping["{};{}".format(
+                                        columns["nazev rytir"][i], columns["id edice rytir"][i])])
+                                except Exception as e:
+                                    print("Failed to add item to {} error: {}".format(columns["id rishada"][0], e))
+                            # try:
+                            #     # row = list(filter(None, row))
+                            #     self.search[columns["id rishada"][0]] = [
+                            #         self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
+                            #         for i in range(len(columns["nazev rytir"]))]
+                            # except KeyError as ke:
+                            #     self.search[columns["id rishada"][0]] = []
+                            #     print("Error at search pairing {}".format(ke))
+                            for k in columns:
+                                columns[k] = []
             except Exception as e:
                 # traceback.print_exc()
                 print("Error at input read {} at row {}".format(e, row))
         else:
-            raise KeyboardInterrupt("Missing file vstup.csv")
+            raise KeyboardInterrupt("Missing file ridici-soubor.csv")
 
     def read_r(self) -> dict:
         if os.path.isfile("rishada.csv"):
@@ -150,9 +163,15 @@ class Joiner:
                     prices, stock, data = [], [], []
                     try:
                         for item in value:
-                            prices.append(int(rytir_data[item][0]))  # prvni index je cena
-                            stock.append(int(rytir_data[item][1]))  # druhy index je sklad
-                            data.append(";".join(rytir_data[item]))
+                            try:
+                                prices.append(int(rytir_data[item][0]))  # prvni index je cena
+                                stock.append(int(rytir_data[item][1]))  # druhy index je sklad
+                                data.append(";".join(rytir_data[item]))
+                            except Exception as e:
+                                prices.append(0)
+                                stock.append(0)
+                                data.append("FAILED;FAILED;FAILED")
+                                print("Failed to add rytir card with id: {} to result, error: {}".format(item,e))
                         if len(data) == 0:
                             file.write("{}\n".format(";".join(rishada_data[key])))
                         else:
@@ -161,12 +180,12 @@ class Joiner:
                                                           sum(stock),
                                                           ";".join(data)))
                     except Exception as e:
-                        file.write("{}\n".format(";".join(rishada_data[key])))
+                        file.write("{};FAILED\n".format(";".join(rishada_data[key])))
                         print("Error at data paring, reason: {} at id {}".format(e, key))
             print("Wrote {} lines to result.csv".format(len(rishada_data)))
         except Exception as e:
             #traceback.print_exc()
-            print("Generic error at data pairing {}".format(e))
+            print("Error at data pairing {}".format(e))
 
     def main(self):
         try:
