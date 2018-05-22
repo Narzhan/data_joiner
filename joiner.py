@@ -87,7 +87,7 @@ class Joiner:
                 # traceback.print_exc()
                 print("Error at input read {} at row {}".format(e, row))
         else:
-            raise KeyboardInterrupt("Missing file ridici-soubor.csv")
+            raise KeyboardInterrupt("Missing file vstup.csv")
 
     def read_r(self) -> dict:
         if os.path.isfile("rishada.csv"):
@@ -185,7 +185,7 @@ class Joiner:
             print("Wrote {} lines to result.csv".format(len(rishada_data)))
         except Exception as e:
             #traceback.print_exc()
-            print("Error at data pairing {}".format(e))
+            print("General error at data pairing {}".format(e))
 
     def main(self):
         try:
