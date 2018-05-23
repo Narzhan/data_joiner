@@ -72,6 +72,7 @@ class Joiner:
                                     self.search[columns["id rishada"][0]].append(self.id_mapping["{};{}".format(
                                         columns["nazev rytir"][i], columns["id edice rytir"][i])])
                                 except Exception as e:
+                                    self.search[columns["id rishada"][0]].append("fail")
                                     print("Failed to add item to {} error: {}".format(columns["id rishada"][0], e))
                             # try:
                             #     # row = list(filter(None, row))
@@ -163,16 +164,22 @@ class Joiner:
                     prices, stock, data = [], [], []
                     try:
                         for item in value:
-                            try:
-                                prices.append(int(rytir_data[item][0]))  # prvni index je cena
-                                stock.append(int(rytir_data[item][1]))  # druhy index je sklad
-                                data.append(";".join(rytir_data[item]))
-                            except Exception as e:
+                            if item == "fail":
                                 if len(prices) == 0 and len(stock) == 0:
                                     prices.append(0)
                                     stock.append(0)
                                 data.append("FAILED;FAILED;FAILED")
-                                print("Failed to add rytir card with id: {} to result, error: {}".format(item, e))
+                            else:
+                                try:
+                                    prices.append(int(rytir_data[item][0]))  # prvni index je cena
+                                    stock.append(int(rytir_data[item][1]))  # druhy index je sklad
+                                    data.append(";".join(rytir_data[item]))
+                                except Exception as e:
+                                    if len(prices) == 0 and len(stock) == 0:
+                                        prices.append(0)
+                                        stock.append(0)
+                                    data.append("FAILED;FAILED;FAILED")
+                                    print("Failed to add rytir card with id: {} to result, error: {}".format(item, e))
                         if len(data) == 0:
                             file.write("{}\n".format(";".join(rishada_data[key])))
                         else:
