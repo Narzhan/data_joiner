@@ -168,10 +168,11 @@ class Joiner:
                                 stock.append(int(rytir_data[item][1]))  # druhy index je sklad
                                 data.append(";".join(rytir_data[item]))
                             except Exception as e:
-                                prices.append(0)
-                                stock.append(0)
+                                if len(prices) == 0 and len(stock) == 0:
+                                    prices.append(0)
+                                    stock.append(0)
                                 data.append("FAILED;FAILED;FAILED")
-                                print("Failed to add rytir card with id: {} to result, error: {}".format(item,e))
+                                print("Failed to add rytir card with id: {} to result, error: {}".format(item, e))
                         if len(data) == 0:
                             file.write("{}\n".format(";".join(rishada_data[key])))
                         else:
