@@ -184,7 +184,7 @@ class Joiner:
                             file.write("{}\n".format(";".join(rishada_data[key])))
                         else:
                             file.write(
-                                "{};{};{};{};{}\n".format(";".join(rishada_data[key]), max(prices), min(prices),
+                                "{};{};{};{};{}\n".format(";".join(rishada_data[key]), min(prices), max(prices),
                                                           sum(stock),
                                                           ";".join(data)))
                     except Exception as e:
