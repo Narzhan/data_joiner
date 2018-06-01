@@ -18,7 +18,7 @@ class Joiner:
         while True:
             uid = str(uuid.uuid4())[:6]
             if uid not in self.ids:
-                self.ids.update(uid)
+                self.ids.add(uid)
                 return uid
 
     def write_ids(self):
