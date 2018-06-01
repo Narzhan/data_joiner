@@ -120,6 +120,7 @@ class Joiner:
                     self.max_items = len(lists)
                 for card in lists:
                     searched_cards.append(card)
+            searched_cards = set(searched_cards) # remove duplicates and speed up in lookup next
             with open("rytir_with_ids.csv", "r") as file:
                 reader = csv.reader(file, delimiter=";")
                 data = {}
