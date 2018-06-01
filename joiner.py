@@ -11,14 +11,14 @@ class Joiner:
     def __init__(self):
         self.search = {}
         self.result = {}
-        self.ids = []
+        self.ids = set()
         self.id_mapping = {}
 
     def generate_id(self):
         while True:
             uid = str(uuid.uuid4())[:6]
             if uid not in self.ids:
-                self.ids.append(uid)
+                self.ids.update(uid)
                 return uid
 
     def write_ids(self):
