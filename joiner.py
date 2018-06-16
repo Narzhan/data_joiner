@@ -166,9 +166,12 @@ class Joiner:
                     try:
                         for item in value:
                             if item == "fail":
-                                if len(prices) == 0 and len(stock) == 0:
+                                if all(card == "fail" for card in value):
                                     prices.append(0)
                                     stock.append(0)
+                                # if len(prices) == 0 and len(stock) == 0:
+                                #     prices.append(0)
+                                #     stock.append(0)
                                 data.append("FAILED;FAILED;FAILED")
                             else:
                                 try:
