@@ -3,7 +3,6 @@ import os
 import sys
 import uuid
 import traceback
-import re
 import json
 
 
@@ -44,9 +43,6 @@ class Joiner:
         with open("cache.json", "r") as cache:
             self.id_mapping = json.load(cache)
 
-#self.id_mapping["{};{}".format(list(filter(None, columns["nazev rytir"]))[i],list(filter(None, columns["id edice rytir"]))[i])]
-#                           for i in range(len(list(filter(None,columns["nazev rytir"]))))
-
     def read_input(self):
         if os.path.isfile("vstup.csv"):
             try:
@@ -74,14 +70,6 @@ class Joiner:
                                 except Exception as e:
                                     self.search[columns["id rishada"][0]].append("fail")
                                     print("Failed to add item to {} error: {}".format(columns["id rishada"][0], e))
-                            # try:
-                            #     # row = list(filter(None, row))
-                            #     self.search[columns["id rishada"][0]] = [
-                            #         self.id_mapping["{};{}".format(columns["nazev rytir"][i], columns["id edice rytir"][i])]
-                            #         for i in range(len(columns["nazev rytir"]))]
-                            # except KeyError as ke:
-                            #     self.search[columns["id rishada"][0]] = []
-                            #     print("Error at search pairing {}".format(ke))
                             for k in columns:
                                 columns[k] = []
             except Exception as e:
@@ -99,8 +87,6 @@ class Joiner:
                 for row in reader:
                     try:
                         if row[0] in self.search.keys():  # na prvnim indexu je id karty
-                            # if ",," in row[-1] or "," in row[-1]:
-                            #     row[-1] = re.split(",,|,", row[-1])[0]
                             data[row[0]] = [row[0], row[1], row[3], row[2], row[6], row[9], row[8], row[10]]
                             # posloupnost indexu odpovida tomuto poradi polozek
                             # id nazev EdID Edice Rarita prodejka nakupka sklad
@@ -127,8 +113,6 @@ class Joiner:
                 for row in reader:
                     try:
                         if row[0] in searched_cards:
-                            # if ",," in row[-1] or "," in row[-1]:
-                            #     row[-1] = re.split(",,|,", row[-1])[0]
                             data[row[0]] = [row[3], row[4],
                                             row[2]]  # prvni index je id karty, treti je cena ctvrty je sklad a druha je edice
                     except Exception as e:
@@ -169,9 +153,6 @@ class Joiner:
                                 if all(card == "fail" for card in value):
                                     prices.append(0)
                                     stock.append(0)
-                                # if len(prices) == 0 and len(stock) == 0:
-                                #     prices.append(0)
-                                #     stock.append(0)
                                 data.append("FAILED;FAILED;FAILED")
                             else:
                                 try:
