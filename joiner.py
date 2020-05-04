@@ -66,7 +66,7 @@ class Joiner:
                             for i in range(len(columns["nazev rytir"])):
                                 try:
                                     self.search[columns["id rishada"][0]].append(self.id_mapping["{};{}".format(
-                                        columns["nazev rytir"][i], columns["id edice rytir"][i])])
+                                        columns["nazev rytir"][i], columns["edice rytir"][i])])
                                 except Exception as e:
                                     self.search[columns["id rishada"][0]].append("fail")
                                     print("Failed to add item to {} error: {}".format(columns["id rishada"][0], e))
